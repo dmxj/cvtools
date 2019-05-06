@@ -10,11 +10,12 @@ import cv2
 import copy
 import shapely
 import json
-from shapely.geometry import Polygon,MultiPoint
+from shapely.geometry import Polygon, MultiPoint
 import numpy as np
 from utils import dataset_util
 from lxml import etree
-from lxml.etree import Element,SubElement,ElementTree
+from lxml.etree import Element, SubElement, ElementTree
+
 
 def _load_anno_sample(anno_file):
     """
@@ -28,17 +29,19 @@ def _load_anno_sample(anno_file):
     anno_data = dataset_util.recursive_parse_xml_to_dict(xml)['annotation']
     return anno_data
 
+
 def _load_labelme_points_list(labelme_anno_file):
     """
     加载labelme标注文件中的polygon列表
     :param labelme_anno_file:
     :return:
     """
-    anno_data = json.load(open(labelme_anno_file,"r"))
+    anno_data = json.load(open(labelme_anno_file, "r"))
     points_list = [shape["points"] for shape in anno_data["shapes"]]
     return points_list
 
-def _reset_dir(dist_dir,is_seg=False):
+
+def _reset_dir(dist_dir, is_seg=False):
     """
     创建pascal voc数据集的目录
     :param dist_dir:
@@ -63,7 +66,8 @@ def _reset_dir(dist_dir,is_seg=False):
     os.makedirs(dist_segclass_path)
     os.makedirs(dist_segobj_path)
 
-    return dist_image_path, dist_anno_path, dist_imageset_path, dist_segclass_path,dist_segobj_path
+    return dist_image_path, dist_anno_path, dist_imageset_path, dist_segclass_path, dist_segobj_path
+
 
 def _get_bbox_from_points(points):
     """
@@ -79,10 +83,10 @@ def _get_bbox_from_points(points):
     xmax = max(x_list)
     ymax = max(y_list)
 
-    return xmin,ymin,xmax,ymax
+    return xmin, ymin, xmax, ymax
 
 
-def cut_image(image_path,cut_width=300,cut_height=300,overlap=120):
+def cut_image(image_path, cut_width=300, cut_height=300, overlap=120):
     """
     切图，并返回小图的列表
     :param image_path:
@@ -114,7 +118,7 @@ def cut_image(image_path,cut_width=300,cut_height=300,overlap=120):
 
                 cut_image_list.append(
                     (
-                        img[ymin:ymax, xmin:xmax],xmin,ymin
+                        img[ymin:ymax, xmin:xmax], xmin, ymin
                     )
                 )
 
@@ -123,7 +127,8 @@ def cut_image(image_path,cut_width=300,cut_height=300,overlap=120):
 
     return cut_image_list
 
-def calc_cut_image_bbox_with_polygon(polygon_list,width,height,x_offset,y_offset):
+
+def calc_cut_image_bbox_with_polygon(polygon_list, width, height, x_offset, y_offset):
     """
     根据polygon获取切图的bouding box坐标信息
     :param polygon_list:list of polygon,each format: [[x1,y1],[x2,y2],...]
@@ -141,7 +146,9 @@ def calc_cut_image_bbox_with_polygon(polygon_list,width,height,x_offset,y_offset
         if len(polygon) == 0:
             continue
         origin_pg = Polygon(np.array(polygon))
-        cut_pg = Polygon(np.array([[x_offset,y_offset],[x_offset,y_offset+height],[x_offset+width,y_offset+height],[x_offset+width,y_offset]]))
+        cut_pg = Polygon(np.array(
+            [[x_offset, y_offset], [x_offset, y_offset + height], [x_offset + width, y_offset + height],
+             [x_offset + width, y_offset]]))
 
         intersec_hull = origin_pg.intersection(cut_pg).convex_hull
         try:
@@ -150,18 +157,19 @@ def calc_cut_image_bbox_with_polygon(polygon_list,width,height,x_offset,y_offset
                 continue
 
             xmin, ymin, xmax, ymax = _get_bbox_from_points(coords)
-            xmin = max(0,xmin-x_offset)
-            ymin = max(0,ymin-y_offset)
-            xmax = max(0,xmax-x_offset)
-            ymax = max(0,ymax-y_offset)
+            xmin = max(0, xmin - x_offset)
+            ymin = max(0, ymin - y_offset)
+            xmax = max(0, xmax - x_offset)
+            ymax = max(0, ymax - y_offset)
 
-            bbox_list.append([xmin,ymin,xmax,ymax])
+            bbox_list.append([xmin, ymin, xmax, ymax])
         except:
             continue
 
     return bbox_list
 
-def calc_cut_image_bbox(origin_anno_data,width,height,x_offset,y_offset):
+
+def calc_cut_image_bbox(origin_anno_data, width, height, x_offset, y_offset):
     """
     获取切图的新的bounding box坐标信息
     :param origin_anno_data:
@@ -204,6 +212,7 @@ def calc_cut_image_bbox(origin_anno_data,width,height,x_offset,y_offset):
         cut_object_infos.append(cut_object)
 
     return cut_object_infos
+
 
 def write_anno_xml(anno_data, anno_file_path):
     """
@@ -252,9 +261,10 @@ def write_anno_xml(anno_data, anno_file_path):
         SubElement(bndbox, 'ymax').text = str(object["bndbox"]["ymax"])
 
     tree = ElementTree(root)
-    tree.write(anno_file_path, encoding='utf-8',pretty_print=True)
+    tree.write(anno_file_path, encoding='utf-8', pretty_print=True)
 
-def pascal_crop(pascal_voc_dir,label_me_dir,dist_dir,is_seg=False,suffix="jpg",cut_width=300,cut_height=300,overlap=120):
+def pascal_crop(pascal_voc_dir, label_me_dir, dist_dir, is_seg=False, suffix="jpg", cut_width=300, cut_height=300,
+                overlap=120):
     """
     切图入口函数
     :param pascal_voc_dir:
@@ -268,41 +278,41 @@ def pascal_crop(pascal_voc_dir,label_me_dir,dist_dir,is_seg=False,suffix="jpg",c
     :return:
     """
     dist_image_path, dist_anno_path, dist_imageset_path, \
-    dist_segclass_path, dist_segobj_path = _reset_dir(dist_dir=dist_dir,is_seg=is_seg)
+    dist_segclass_path, dist_segobj_path = _reset_dir(dist_dir=dist_dir, is_seg=is_seg)
     if is_seg:
-        train_sample_list = mmcv.list_from_file(os.path.join(pascal_voc_dir,"ImageSets/Segmentation","train.txt"))
-        val_sample_list = mmcv.list_from_file(os.path.join(pascal_voc_dir,"ImageSets/Segmentation","val.txt"))
+        train_sample_list = mmcv.list_from_file(os.path.join(pascal_voc_dir, "ImageSets/Segmentation", "train.txt"))
+        val_sample_list = mmcv.list_from_file(os.path.join(pascal_voc_dir, "ImageSets/Segmentation", "val.txt"))
     else:
-        train_sample_list = mmcv.list_from_file(os.path.join(pascal_voc_dir,"ImageSets/Main","train.txt"))
-        val_sample_list = mmcv.list_from_file(os.path.join(pascal_voc_dir,"ImageSets/Main","val.txt"))
+        train_sample_list = mmcv.list_from_file(os.path.join(pascal_voc_dir, "ImageSets/Main", "train.txt"))
+        val_sample_list = mmcv.list_from_file(os.path.join(pascal_voc_dir, "ImageSets/Main", "val.txt"))
 
     cut_train_sample_list = []
     cut_val_sample_list = []
     for sample_name in list(set(train_sample_list + val_sample_list)):
-        image_file = os.path.join(pascal_voc_dir,"JPEGImages","{}.{}".format(sample_name,suffix))
-        anno_file = os.path.join(pascal_voc_dir,"Annotations",sample_name + ".xml")
+        image_file = os.path.join(pascal_voc_dir, "JPEGImages", "{}.{}".format(sample_name, suffix))
+        anno_file = os.path.join(pascal_voc_dir, "Annotations", sample_name + ".xml")
         anno_data = _load_anno_sample(anno_file)
 
         if label_me_dir is not None:
             labelme_anno_file = os.path.join(label_me_dir, sample_name + ".json")
             points_list = _load_labelme_points_list(labelme_anno_file)
 
-        cut_image_list = cut_image(image_file,cut_width,cut_height,overlap)
+        cut_image_list = cut_image(image_file, cut_width, cut_height, overlap)
         contain_target_list = []
 
         for cut_item in cut_image_list:
-            (cut_image_np,x_offset,y_offset) = cut_item
-            cut_sample_name = "{}_{}_{}".format(sample_name,x_offset,y_offset)
+            (cut_image_np, x_offset, y_offset) = cut_item
+            cut_sample_name = "{}_{}_{}".format(sample_name, x_offset, y_offset)
 
             if sample_name in train_sample_list:
                 cut_train_sample_list.append(cut_sample_name)
             if sample_name in val_sample_list:
                 cut_val_sample_list.append(cut_sample_name)
 
-            cut_image_save_path = os.path.join(dist_image_path,"{}.{}".format(cut_sample_name,suffix))
+            cut_image_save_path = os.path.join(dist_image_path, "{}.{}".format(cut_sample_name, suffix))
             cv2.imwrite(cut_image_save_path, cut_image_np, [int(cv2.IMWRITE_JPEG_QUALITY), 100])
 
-            cut_image_height,cut_image_width,dim = cut_image_np.shape
+            cut_image_height, cut_image_width, dim = cut_image_np.shape
             cut_anno_data = copy.deepcopy(anno_data)
 
             if label_me_dir is None:
@@ -313,64 +323,66 @@ def pascal_crop(pascal_voc_dir,label_me_dir,dist_dir,is_seg=False,suffix="jpg",c
                 else:  # 包含检测目标的切图样本
                     contain_target_list.append(cut_sample_name)
             else:
-                cut_bbox_list = calc_cut_image_bbox_with_polygon(points_list,cut_image_width,cut_image_height,x_offset,y_offset)
+                cut_bbox_list = calc_cut_image_bbox_with_polygon(points_list, cut_image_width, cut_image_height,
+                                                                 x_offset, y_offset)
                 cut_anno_data["objects"] = [{
-                    "name":"huahen",
-                    "pose":"Unspecified",
-                    "truncated":"0",
-                    "difficult":"0",
-                    "bndbox":{
-                        "xmin":str(int(bbox[0])),
-                        "ymin":str(int(bbox[1])),
-                        "xmax":str(int(bbox[2])),
-                        "ymax":str(int(bbox[3])),
+                    "name": "huahen",
+                    "pose": "Unspecified",
+                    "truncated": "0",
+                    "difficult": "0",
+                    "bndbox": {
+                        "xmin": str(int(bbox[0])),
+                        "ymin": str(int(bbox[1])),
+                        "xmax": str(int(bbox[2])),
+                        "ymax": str(int(bbox[3])),
                     }
                 } for bbox in cut_bbox_list]
-                if len(cut_bbox_list) == 0: # 如果不包含检测目标则没有分割的数据
+                if len(cut_bbox_list) == 0:  # 如果不包含检测目标则没有分割的数据
                     cut_anno_data["segmented"] = "0"
-                else: # 包含检测目标的切图样本
+                else:  # 包含检测目标的切图样本
                     contain_target_list.append(cut_sample_name)
-
 
             cut_anno_data["folder"] = dist_image_path
             cut_anno_data["filename"] = os.path.basename(cut_image_save_path)
             cut_anno_data["size"]["width"] = cut_image_width
             cut_anno_data["size"]["height"] = cut_image_height
 
-            cut_anno_save_path = os.path.join(dist_anno_path,cut_sample_name + ".xml")
-            write_anno_xml(cut_anno_data,cut_anno_save_path)
+            cut_anno_save_path = os.path.join(dist_anno_path, cut_sample_name + ".xml")
+            write_anno_xml(cut_anno_data, cut_anno_save_path)
 
         if is_seg and int(anno_data["segmented"]) == 1:
             segment_origin_image_files = [
-                os.path.join(pascal_voc_dir,"SegmentationClass",sample_name + ".png"),
+                os.path.join(pascal_voc_dir, "SegmentationClass", sample_name + ".png"),
                 os.path.join(pascal_voc_dir, "SegmentationObject", sample_name + ".png")
             ]
 
-            for i,segment_image_file in enumerate(segment_origin_image_files):
+            for i, segment_image_file in enumerate(segment_origin_image_files):
                 if not os.path.exists(segment_image_file):
                     continue
                 dis_seg_image_path = dist_segclass_path if i == 0 else dist_segobj_path
                 cut_image_list = cut_image(segment_image_file, cut_width, cut_height, overlap)
-                for (cut_image_np,x_offset,y_offset) in cut_image_list:
+                for (cut_image_np, x_offset, y_offset) in cut_image_list:
                     # 如果当前的分割切图包含检测目标则保存对应的分割mask图片
-                    if "{}_{}_{}".format(sample_name,x_offset,y_offset) not in contain_target_list:
+                    if "{}_{}_{}".format(sample_name, x_offset, y_offset) not in contain_target_list:
                         continue
                     cv2.imwrite(
-                        filename=os.path.join(dis_seg_image_path,"{}_{}_{}.png".format(sample_name,x_offset,y_offset)),
+                        filename=os.path.join(dis_seg_image_path,
+                                              "{}_{}_{}.png".format(sample_name, x_offset, y_offset)),
                         img=cut_image_np,
                         params=[int(cv2.IMWRITE_JPEG_QUALITY), 100])
 
         print("cut {} done.".format(sample_name))
 
     cut_trainval_sample_list = list(set(cut_train_sample_list + cut_val_sample_list))
-    with open(os.path.join(dist_imageset_path,"train.txt"),"w") as fw:
+    with open(os.path.join(dist_imageset_path, "train.txt"), "w") as fw:
         fw.write("\n".join(cut_train_sample_list) + "\n")
-    with open(os.path.join(dist_imageset_path,"val.txt"),"w") as fw:
+    with open(os.path.join(dist_imageset_path, "val.txt"), "w") as fw:
         fw.write("\n".join(cut_val_sample_list) + "\n")
-    with open(os.path.join(dist_imageset_path,"trainval.txt"),"w") as fw:
+    with open(os.path.join(dist_imageset_path, "trainval.txt"), "w") as fw:
         fw.write("\n".join(cut_trainval_sample_list) + "\n")
 
     print("done.")
+
 
 if __name__ == '__main__':
     pascal_crop(
@@ -387,5 +399,3 @@ if __name__ == '__main__':
         cut_height=748,
         overlap=150
     )
-
-

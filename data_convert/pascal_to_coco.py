@@ -68,8 +68,8 @@ def pascal_to_coco(data_dir,dist_dir,label_map_path):
     instance_val = {"images":[],"type": "instances","annotations":[],"categories":categories}
     instance_train = {"images":[],"type": "instances","annotations":[],"categories":categories}
 
-    image_id = 1000
-    anno_id = 6666
+    image_id = 0
+    anno_id = 0
 
     for id,sample in enumerate(val_samples + train_samples):
         image_file = os.path.join(data_dir,"JPEGImages",sample + ".jpg")
@@ -122,8 +122,8 @@ def pascal_to_coco(data_dir,dist_dir,label_map_path):
 
 if __name__ == '__main__':
     pascal_to_coco(
-        data_dir="/Users/rensike/Work/友极/pascal_voc_nls",
-        dist_dir="/Users/rensike/Work/友极/coco_nls",
-        label_map_path="/Users/rensike/Work/友极/label_map.pbtxt"
+        data_dir="/Users/rensike/Work/jiepu/dibu/pascal_dibu",
+        dist_dir="/Users/rensike/Work/jiepu/dibu/coco_dibu",
+        label_map_path="/Users/rensike/Work/jiepu/dibu/label_map.pbtxt"
     )
 

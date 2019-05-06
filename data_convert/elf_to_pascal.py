@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -* -
 """
-标注精灵转pascal voc
+标注精灵转 pascal voc
 """
 
 import os

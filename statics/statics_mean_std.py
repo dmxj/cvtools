@@ -45,7 +45,7 @@ def get_avg_width_height(image_files):
 if __name__ == '__main__':
     from glob import glob
 
-    image_files = []
+    image_files = glob("/Users/rensike/Work/jiepu/dimian/VOC2012_no_bg/JPEGImages/*.jpg")
 
     avg_height,avg_width = get_avg_width_height(image_files)
     print("avg image height:",avg_height)

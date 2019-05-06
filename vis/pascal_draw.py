@@ -50,15 +50,18 @@ def _load_label_map(label_map_path):
     return category_index,category_name_index,categories
 
 
-def draw_and_save_gt(source_dir,output_dir,label_map_path,only_target=False):
+def draw_and_save_gt(source_dir,output_dir,categories,only_target=False):
     image_files = glob.glob(os.path.join(source_dir,"JPEGImages","*.jpg"))
-    category_index, category_name_index, categories = _load_label_map(label_map_path)
+    # category_index, category_name_index, categories = _load_label_map(label_map_path)
+    category_index = {id+1:{'id':id+1,'name':cat} for id,cat in enumerate(categories)}
+    category_name_index = {category_index[cat_id]["name"]: category_index[cat_id] for cat_id in category_index}
 
     if os.path.exists(output_dir):
         shutil.rmtree(output_dir)
     os.makedirs(output_dir)
 
     count = 0
+    names = []
     for image_path in image_files:
         sample_name = os.path.basename(image_path).rsplit(".", 1)[0]
         anno_path = os.path.join(source_dir,"Annotations","{}.xml".format(sample_name))
@@ -74,6 +77,7 @@ def draw_and_save_gt(source_dir,output_dir,label_map_path,only_target=False):
 
         if "object" in anno_data:
             for obj in anno_data["object"]:
+                names.append(obj["name"])
                 boxes.append(
                     [int(obj["bndbox"]["ymin"]), int(obj["bndbox"]["xmin"]), int(obj["bndbox"]["ymax"]),
                      int(obj["bndbox"]["xmax"])])
@@ -115,12 +119,14 @@ def draw_and_save_gt(source_dir,output_dir,label_map_path,only_target=False):
 
         count += 1
 
+    print(list(set(names)))
+
     print("draw done, count is: ",count)
 
 if __name__ == '__main__':
     draw_and_save_gt(
-        source_dir="",
-        output_dir="",
-        label_map_path=""
+        source_dir="/Users/rensike/Work/jiepu/dibu/pascal_dibu",
+        output_dir="/Users/rensike/Work/jiepu/dibu/pascal_dibu_vis",
+        categories=["bengque","maoci","dianduceng"],
     )
 

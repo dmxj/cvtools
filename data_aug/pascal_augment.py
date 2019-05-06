@@ -108,42 +108,51 @@ def pascal_augment(pascal_dir,dist_dir):
     dist_image_path, dist_anno_path, dist_imageset_path = reset_dir(dist_dir)
 
     seq_list = [
-        iaa.Sequential([iaa.Fliplr(0.5)]),
-        iaa.Sequential([iaa.Flipud(0.5)]),
-        iaa.Sequential([iaa.Affine(rotate=90)]),
-        iaa.Sequential([iaa.Affine(rotate=180)]),
-        iaa.Sequential([iaa.Affine(rotate=297),iaa.Multiply((0.7, 1.3))]),
-        iaa.Sequential([iaa.Affine(rotate=90),iaa.Multiply((0.7, 1.3))]),
-        iaa.Sequential([iaa.Affine(rotate=180),iaa.Multiply((0.7, 1.3))]),
-        iaa.Sequential([iaa.Affine(rotate=297),iaa.Multiply((0.7, 1.3))]),
-        iaa.Sequential([iaa.Fliplr(0.5),iaa.Affine(rotate=90),iaa.ContrastNormalization()]),
-        iaa.Sequential([iaa.Flipud(0.5),iaa.Affine(rotate=180),iaa.ContrastNormalization()]),
-        iaa.Sequential([iaa.Fliplr(0.5),iaa.Affine(rotate=297),iaa.ContrastNormalization()]),
-        iaa.Sequential([iaa.Flipud(0.5),iaa.Affine(rotate=90),iaa.SigmoidContrast()]),
-        iaa.Sequential([iaa.Fliplr(0.5),iaa.Affine(rotate=180),iaa.SigmoidContrast()]),
-        iaa.Sequential([iaa.Flipud(0.5),iaa.Affine(rotate=297),iaa.SigmoidContrast()]),
-        iaa.Sequential([iaa.Multiply((0.7, 1.3))]),
-        iaa.Sequential([iaa.Multiply((0.7, 1.3)),iaa.ContrastNormalization()]),
-        iaa.Sequential([iaa.Fliplr(0.5),iaa.Multiply((0.7, 1.3))]),
-        iaa.Sequential([iaa.Flipud(0.5),iaa.Multiply((0.7, 1.3))]),
-        iaa.Sequential([iaa.Fliplr(0.5),iaa.ContrastNormalization()]),
-        iaa.Sequential([iaa.Flipud(0.5),iaa.ContrastNormalization()]),
-        iaa.Sequential([iaa.Fliplr(0.5),iaa.Multiply((0.7, 1.3)),iaa.ContrastNormalization()]),
-        iaa.Sequential([iaa.Flipud(0.5),iaa.Multiply((0.7, 1.3)),iaa.ContrastNormalization()]),
-        iaa.Sequential([iaa.Affine(translate_px={"x": 40, "y": 60},),iaa.ContrastNormalization()]),
-        iaa.Sequential([iaa.Affine(translate_px={"x": 40, "y": 60},),iaa.Multiply((0.7, 1.3))]),
-        iaa.Sequential([iaa.Affine(translate_px={"x": 40, "y": 60},rotate=90),iaa.Multiply((0.7, 1.3))]),
-        iaa.Sequential([iaa.Affine(translate_px={"x": 40, "y": 60},rotate=180),iaa.Multiply((0.7, 1.3))]),
-        iaa.Sequential([iaa.Fliplr(0.5),iaa.Affine(translate_px={"x": 40, "y": 60},),iaa.ContrastNormalization()]),
-        iaa.Sequential([iaa.Flipud(0.5),iaa.Affine(translate_px={"x": 40, "y": 60},),iaa.Multiply((0.7, 1.3))])
+        iaa.Sequential([iaa.Fliplr(1)]),
+        iaa.Sequential([iaa.Flipud(1)]),
+        iaa.Sequential([iaa.Fliplr(0.7),iaa.Flipud(0.7)]),
+        iaa.Sequential([iaa.Fliplr(0.7),iaa.Flipud(0.7),iaa.ContrastNormalization()]),
+        iaa.Sequential([iaa.Fliplr(0.7),iaa.ContrastNormalization()]),
+        iaa.Sequential([iaa.Flipud(0.7),iaa.ContrastNormalization()]),
     ]
+
+    # seq_list = [
+    #     iaa.Sequential([iaa.Fliplr(0.5)]),
+    #     iaa.Sequential([iaa.Flipud(0.5)]),
+    #     iaa.Sequential([iaa.Affine(rotate=90)]),
+    #     iaa.Sequential([iaa.Affine(rotate=180)]),
+    #     iaa.Sequential([iaa.Affine(rotate=297),iaa.Multiply((0.7, 1.3))]),
+    #     iaa.Sequential([iaa.Affine(rotate=90),iaa.Multiply((0.7, 1.3))]),
+    #     iaa.Sequential([iaa.Affine(rotate=180),iaa.Multiply((0.7, 1.3))]),
+    #     iaa.Sequential([iaa.Affine(rotate=297),iaa.Multiply((0.7, 1.3))]),
+    #     iaa.Sequential([iaa.Fliplr(0.5),iaa.Affine(rotate=90),iaa.ContrastNormalization()]),
+    #     iaa.Sequential([iaa.Flipud(0.5),iaa.Affine(rotate=180),iaa.ContrastNormalization()]),
+    #     iaa.Sequential([iaa.Fliplr(0.5),iaa.Affine(rotate=297),iaa.ContrastNormalization()]),
+    #     iaa.Sequential([iaa.Flipud(0.5),iaa.Affine(rotate=90),iaa.SigmoidContrast()]),
+    #     iaa.Sequential([iaa.Fliplr(0.5),iaa.Affine(rotate=180),iaa.SigmoidContrast()]),
+    #     iaa.Sequential([iaa.Flipud(0.5),iaa.Affine(rotate=297),iaa.SigmoidContrast()]),
+    #     iaa.Sequential([iaa.Multiply((0.7, 1.3))]),
+    #     iaa.Sequential([iaa.Multiply((0.7, 1.3)),iaa.ContrastNormalization()]),
+    #     iaa.Sequential([iaa.Fliplr(0.5),iaa.Multiply((0.7, 1.3))]),
+    #     iaa.Sequential([iaa.Flipud(0.5),iaa.Multiply((0.7, 1.3))]),
+    #     iaa.Sequential([iaa.Fliplr(0.5),iaa.ContrastNormalization()]),
+    #     iaa.Sequential([iaa.Flipud(0.5),iaa.ContrastNormalization()]),
+    #     iaa.Sequential([iaa.Fliplr(0.5),iaa.Multiply((0.7, 1.3)),iaa.ContrastNormalization()]),
+    #     iaa.Sequential([iaa.Flipud(0.5),iaa.Multiply((0.7, 1.3)),iaa.ContrastNormalization()]),
+    #     iaa.Sequential([iaa.Affine(translate_px={"x": 40, "y": 60},),iaa.ContrastNormalization()]),
+    #     iaa.Sequential([iaa.Affine(translate_px={"x": 40, "y": 60},),iaa.Multiply((0.7, 1.3))]),
+    #     iaa.Sequential([iaa.Affine(translate_px={"x": 40, "y": 60},rotate=90),iaa.Multiply((0.7, 1.3))]),
+    #     iaa.Sequential([iaa.Affine(translate_px={"x": 40, "y": 60},rotate=180),iaa.Multiply((0.7, 1.3))]),
+    #     iaa.Sequential([iaa.Fliplr(0.5),iaa.Affine(translate_px={"x": 40, "y": 60},),iaa.ContrastNormalization()]),
+    #     iaa.Sequential([iaa.Flipud(0.5),iaa.Affine(translate_px={"x": 40, "y": 60},),iaa.Multiply((0.7, 1.3))])
+    # ]
 
     trainval_list = mmcv.list_from_file(os.path.join(pascal_dir,"ImageSets/Main","trainval.txt"))
     train_list = mmcv.list_from_file(os.path.join(pascal_dir,"ImageSets/Main","train.txt"))
     val_list = mmcv.list_from_file(os.path.join(pascal_dir,"ImageSets/Main","val.txt"))
 
     # 在原数据集的基础上增广3倍
-    trainval_aug_list = trainval_list + trainval_list + trainval_list
+    trainval_aug_list = trainval_list[:]+trainval_list[:]
 
     shutil.copytree(os.path.join(pascal_dir,"JPEGImages"),dist_image_path)
     shutil.copytree(os.path.join(pascal_dir,"Annotations"),dist_anno_path)
@@ -155,16 +164,27 @@ def pascal_augment(pascal_dir,dist_dir):
         image_file = os.path.join(pascal_dir,"JPEGImages",sample + ".jpg")
         image = cv2.imread(image_file)
 
-        if "aug_0_" + sample in trainval_list:
-            if "aug_1_" + sample in trainval_list:
-                if "aug_2_" + sample in trainval_list:
+        # if sample + "_aug_0" in trainval_list:
+        #     if sample + "_aug_1" in trainval_list:
+        #         if sample + "_aug_2" in trainval_list:
+        #             continue
+        #         else:
+        #             new_sample_name = sample + "_aug_2"
+        #     else:
+        #         new_sample_name = sample + "_aug_1"
+        # else:
+        #     new_sample_name = sample + "_aug_0"
+
+        if sample + "_aug_0" in trainval_list:
+            if sample + "_aug_1" in trainval_list:
+                if sample + "_aug_2" in trainval_list:
                     continue
                 else:
-                    new_sample_name = "aug_2_" + sample
+                    new_sample_name = sample + "_aug_2"
             else:
-                new_sample_name = "aug_1_" + sample
+                new_sample_name = sample + "_aug_1"
         else:
-            new_sample_name = "aug_0_" + sample
+            new_sample_name = sample + "_aug_0"
 
         trainval_list.append(new_sample_name)
         if sample in train_list:
@@ -178,7 +198,8 @@ def pascal_augment(pascal_dir,dist_dir):
             iabbs.append(ia.BoundingBox(x1=bbox[0], y1=bbox[1], x2=bbox[2], y2=bbox[3]))
         bbs = ia.BoundingBoxesOnImage(iabbs, shape=image.shape)
 
-        seq = seq_list[i%len(seq_list)]
+        # seq = seq_list[i%len(seq_list)]
+        seq = random.choice(seq_list)
         seq_det = seq.to_deterministic()
 
         image_aug = seq_det.augment_images([image])[0]
@@ -234,8 +255,8 @@ def pascal_augment(pascal_dir,dist_dir):
 
 if __name__ == '__main__':
     pascal_augment(
-        pascal_dir="/Users/rensike/Work/昆山立讯耳机/blue/pascal_voc_blue_new",
-        dist_dir="/Users/rensike/Work/昆山立讯耳机/blue/pascal_voc_blue_new_augment"
+        pascal_dir="/Users/rensike/Work/宝钢热轧/baogang_hot_data_v4/pascal_huashang",
+        dist_dir="/Users/rensike/Work/宝钢热轧/baogang_hot_data_v4/pascal_huashang_augment"
     )
 
 
