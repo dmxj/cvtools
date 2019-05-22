@@ -114,6 +114,12 @@ def pascal_augment(pascal_dir,dist_dir):
         iaa.Sequential([iaa.Fliplr(0.7),iaa.Flipud(0.7),iaa.ContrastNormalization()]),
         iaa.Sequential([iaa.Fliplr(0.7),iaa.ContrastNormalization()]),
         iaa.Sequential([iaa.Flipud(0.7),iaa.ContrastNormalization()]),
+        # iaa.Sequential([iaa.Affine(translate_px={"x": 40, "y": 0}, ),iaa.Flipud(0.3)]),
+        # iaa.Sequential([iaa.Affine(translate_px={"x": 20, "y": 0}, ),iaa.Fliplr(0.3)]),
+        # iaa.Sequential([iaa.Affine(translate_px={"x": 60, "y": 0}, ),iaa.Flipud(0.3)]),
+        # iaa.Sequential([iaa.Affine(translate_px={"x": -40, "y": 0}, ),iaa.Fliplr(0.3)]),
+        # iaa.Sequential([iaa.Affine(translate_px={"x": -20, "y": 0}, ),iaa.Flipud(0.3)]),
+        # iaa.Sequential([iaa.Affine(translate_px={"x": -60, "y": 0}, ),iaa.Fliplr(0.3)]),
     ]
 
     # seq_list = [
@@ -152,7 +158,7 @@ def pascal_augment(pascal_dir,dist_dir):
     val_list = mmcv.list_from_file(os.path.join(pascal_dir,"ImageSets/Main","val.txt"))
 
     # 在原数据集的基础上增广3倍
-    trainval_aug_list = trainval_list[:]+trainval_list[:]
+    trainval_aug_list = trainval_list[:]+trainval_list[:]+trainval_list[:]
 
     shutil.copytree(os.path.join(pascal_dir,"JPEGImages"),dist_image_path)
     shutil.copytree(os.path.join(pascal_dir,"Annotations"),dist_anno_path)
@@ -178,7 +184,10 @@ def pascal_augment(pascal_dir,dist_dir):
         if sample + "_aug_0" in trainval_list:
             if sample + "_aug_1" in trainval_list:
                 if sample + "_aug_2" in trainval_list:
-                    continue
+                    if sample + "_aug_3" in trainval_list:
+                        continue
+                    else:
+                        new_sample_name = sample + "_aug_3"
                 else:
                     new_sample_name = sample + "_aug_2"
             else:
@@ -225,10 +234,10 @@ def pascal_augment(pascal_dir,dist_dir):
             anno_data["objects"].append({
                 "name":aug_name,
                 "bndbox":{
-                    "xmin": int(bbox[0])-1,
-                    "ymin": int(bbox[1])-1,
-                    "xmax": int(bbox[2])+1,
-                    "ymax": int(bbox[3])+1,
+                    "xmin": max(int(bbox[0])-1,0),
+                    "ymin": max(int(bbox[1])-1,0),
+                    "xmax": min(int(bbox[2])+1,aug_width),
+                    "ymax": min(int(bbox[3])+1,aug_height),
                 }
             })
 
@@ -256,7 +265,7 @@ def pascal_augment(pascal_dir,dist_dir):
 if __name__ == '__main__':
     pascal_augment(
         pascal_dir="/Users/rensike/Work/宝钢热轧/baogang_hot_data_v4/pascal_huashang",
-        dist_dir="/Users/rensike/Work/宝钢热轧/baogang_hot_data_v4/pascal_huashang_augment"
+        dist_dir="/Users/rensike/Work/宝钢热轧/baogang_hot_data_v4/pascal_huashang_augment_v3"
     )
 
 

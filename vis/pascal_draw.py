@@ -49,8 +49,15 @@ def _load_label_map(label_map_path):
 
     return category_index,category_name_index,categories
 
+def _merge_ori_pred(ori_img, pred_img, axis=1):
+    if isinstance(ori_img,str):
+        ori_img_np = cv2.imread(ori_img)
+    else:
+        ori_img_np = ori_img
+    merged_img_np = np.concatenate((ori_img_np, pred_img), axis=axis)
+    return merged_img_np
 
-def draw_and_save_gt(source_dir,output_dir,categories,only_target=False):
+def draw_and_save_gt(source_dir,output_dir,categories,only_target=False,merge=False,merge_axis=0):
     image_files = glob.glob(os.path.join(source_dir,"JPEGImages","*.jpg"))
     # category_index, category_name_index, categories = _load_label_map(label_map_path)
     category_index = {id+1:{'id':id+1,'name':cat} for id,cat in enumerate(categories)}
@@ -112,6 +119,10 @@ def draw_and_save_gt(source_dir,output_dir,categories,only_target=False):
             instance_masks=mask_np,
             use_normalized_coordinates=False,
             line_thickness=1)
+
+        if merge:
+            image_np = _merge_ori_pred(image_path,image_np,axis=merge_axis)
+
         image_drawed = image_util.load_numpy_array_into_image(image_np)
 
         save_path = os.path.join(output_dir,os.path.basename(image_path))
@@ -124,9 +135,20 @@ def draw_and_save_gt(source_dir,output_dir,categories,only_target=False):
     print("draw done, count is: ",count)
 
 if __name__ == '__main__':
+    # import mmcv
+    # draw_and_save_gt(
+    #     source_dir="/Users/rensike/Files/temp/voc_tiny",
+    #     output_dir="/Users/rensike/Files/temp/voc_tiny_vis",
+    #     categories=mmcv.list_from_file("/Users/rensike/Files/temp/voc_class.txt")
+    #     # categories=["bengque","maoci","dianduceng"],
+    # )
+
     draw_and_save_gt(
-        source_dir="/Users/rensike/Work/jiepu/dibu/pascal_dibu",
-        output_dir="/Users/rensike/Work/jiepu/dibu/pascal_dibu_vis",
-        categories=["bengque","maoci","dianduceng"],
+        source_dir="/Users/rensike/Work/宝钢热轧/baogang_hot_data_v4/pascal_voc_hot_v4_0",
+        output_dir="/Users/rensike/Work/宝钢热轧/baogang_hot_data_v4/pascal_voc_hot_v4_0_vis",
+        categories=["heitiao","heixian","huashang","hongtiepi"],
+        merge=True,
+        merge_axis=0,
+        # categories=["bengque","yashang","cahuashang","bengdian","tudian","maoci"],
     )
 

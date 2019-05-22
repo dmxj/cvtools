@@ -122,8 +122,8 @@ def pascal_to_coco(data_dir,dist_dir,label_map_path):
 
 if __name__ == '__main__':
     pascal_to_coco(
-        data_dir="/Users/rensike/Work/jiepu/dibu/pascal_dibu",
-        dist_dir="/Users/rensike/Work/jiepu/dibu/coco_dibu",
-        label_map_path="/Users/rensike/Work/jiepu/dibu/label_map.pbtxt"
+        data_dir="/Users/rensike/Work/友极/cexie",
+        dist_dir="/Users/rensike/Work/友极/coco_cexie",
+        label_map_path="/Users/rensike/Work/友极/cexie/label_map.pbtxt"
     )
 

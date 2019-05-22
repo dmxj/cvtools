@@ -261,11 +261,11 @@ def make_pascal_voc(
 if __name__ == '__main__':
     from glob import glob
 
-    anno_files = glob(os.path.join("/Users/rensike/Work/宝钢热轧/baogang_hot_data_v4/label_data_v0/hot_jpg", "*/*.json"))
+    anno_files = glob("/Users/rensike/Work/宝钢热轧/baogang_hot_data_v4/poc_test_label_images/images2/*.json")
     image_files = [os.path.join(os.path.dirname(anno_file), os.path.basename(anno_file).rsplit(".", 1)[0] + ".jpg") for
                    anno_file in anno_files]
 
     make_pascal_voc(
         image_anno_path=list(zip(image_files, anno_files)),
-        dist_dir="/Users/rensike/Work/宝钢热轧/baogang_hot_data_v4/pascal_voc_hot_vtest",
+        dist_dir="/Users/rensike/Work/宝钢热轧/baogang_hot_data_v4/pascal_voc_hot_vtest_labels",
     )
